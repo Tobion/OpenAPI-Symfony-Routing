@@ -1,0 +1,39 @@
+{
+    "name": "tobion/openapi-symfony-routing",
+    "type": "library",
+    "description": "Loads routes in Symfony based on OpenAPI/Swagger annotations",
+    "keywords": ["OpenAPI", "swagger", "routing", "router", "routes", "annotations", "OAI"],
+    "homepage": "https://github.com/Tobion/OpenAPI-Symfony-Routing",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Tobias Schultze",
+            "homepage": "https://github.com/Tobion"
+        }
+    ],
+    "require": {
+        "php": ">=7.2",
+        "symfony/finder": "^4.4|^5.0",
+        "symfony/framework-bundle": "^4.4|^5.0",
+        "symfony/routing": "^4.4|^5.0",
+        "zircote/swagger-php": "^2.0"
+    },
+    "require-dev": {
+        "symfony/phpunit-bridge": "^5.0@dev"
+    },
+    "autoload": {
+        "psr-4": {
+            "Tobion\\OpenApiSymfonyRouting\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tobion\\OpenApiSymfonyRouting\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "0.1-dev"
+        }
+    }
+}
