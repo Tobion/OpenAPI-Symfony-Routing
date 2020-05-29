@@ -13,37 +13,49 @@ use Symfony\Component\Routing\RouteCollection;
 class OpenApiRouteLoader implements RouteLoaderInterface
 {
     /**
-     * @var string[]
+     * @var Finder
      */
-    private $sourceDirectories;
+    private $finder;
 
     /**
-     * @var string
+     * @var bool
      */
-    private $sourcePattern;
+    private $addFormatSuffix;
+
+    /**
+     * @var string|null
+     */
+    private $defaultFormatPattern;
 
     /**
      * @var array<string, int>
      */
     private $routeNames = [];
 
-    /**
-     * @param string[] $sourceDirectories
-     */
     public function __construct(
-        array $sourceDirectories,
-        string $sourcePattern = '/\.php/'
+        ?Finder $finder = null,
+        bool $addFormatSuffix = false,
+        ?string $defaultFormatPattern = null
     ) {
-        $this->sourceDirectories = $sourceDirectories;
-        $this->sourcePattern = $sourcePattern;
+        if (null === $finder) {
+            // try to use the symfony flex default src directory based on a composer install
+            $srcDir = __DIR__.'/../../../../src';
+            $realPath = realpath($srcDir);
+            if (!$realPath || !is_dir($realPath)) {
+                throw new \LogicException(sprintf('The default directory to look for OpenAPI/Swagger annotations "%s" does not exist. Please configure the finder explicitly.'));
+            }
+
+            $finder = (new Finder())->in($realPath)->files()->name('*.php')->sortByName()->followLinks();
+        }
+
+        $this->finder = $finder;
+        $this->addFormatSuffix = $addFormatSuffix;
+        $this->defaultFormatPattern = $defaultFormatPattern;
     }
 
     public function __invoke(): RouteCollection
     {
-        $finder = new Finder();
-        $finder->in($this->sourceDirectories)->path($this->sourcePattern);
-
-        $fullSwagger = \Swagger\scan($finder);
+        $fullSwagger = \Swagger\scan($this->finder);
         $routeCollection = new RouteCollection();
 
         foreach ($fullSwagger->paths as $path) {
@@ -75,13 +87,13 @@ class OpenApiRouteLoader implements RouteLoaderInterface
 
     private function createRoute(Operation $operation, string $controller): Route
     {
-        $formatSuffix = $operation->x['format-suffix'] ?? true;
+        $formatSuffix = $operation->x['format-suffix'] ?? $this->addFormatSuffix;
         $path = $formatSuffix ? $operation->path.'.{_format}' : $operation->path;
         $route = new Route($path);
         $route->setMethods($operation->method);
         $route->setDefault('_controller', $controller);
         if ($formatSuffix) {
-            $formatPattern = $operation->x['format-pattern'] ?? 'json|xml';
+            $formatPattern = $operation->x['format-pattern'] ?? $this->defaultFormatPattern;
             $route->setDefault('_format', null);
             $route->setRequirement('_format', $formatPattern);
         }
