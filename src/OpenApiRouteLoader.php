@@ -95,7 +95,10 @@ class OpenApiRouteLoader implements RouteLoaderInterface
         if ($formatSuffix) {
             $formatPattern = $operation->x['format-pattern'] ?? $this->defaultFormatPattern;
             $route->setDefault('_format', null);
-            $route->setRequirement('_format', $formatPattern);
+
+            if (null !== $formatPattern) {
+                $route->setRequirement('_format', $formatPattern);
+            }
         }
         if (null !== $operation->parameters) {
             foreach ($operation->parameters as $parameter) {
