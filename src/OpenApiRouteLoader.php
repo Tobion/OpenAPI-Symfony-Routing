@@ -22,21 +22,24 @@ class OpenApiRouteLoader implements RouteLoaderInterface
      */
     private $routeNames = [];
 
-    public function __construct(
-        ?Finder $finder = null
-    ) {
-        if (null === $finder) {
-            // try to use the symfony flex default src directory based on a composer install
-            $srcDir = __DIR__.'/../../../../src';
-            $realPath = realpath($srcDir);
-            if (!$realPath || !is_dir($realPath)) {
-                throw new \LogicException(sprintf('The default directory to look for OpenAPI/Swagger annotations "%s" does not exist. Please configure the finder explicitly.'));
-            }
-
-            $finder = (new Finder())->in($realPath)->files()->name('*.php')->sortByName()->followLinks();
-        }
-
+    public function __construct(Finder $finder)
+    {
         $this->finder = $finder;
+    }
+
+    public static function fromDirectories(string $dir, string ...$moreDirs): self
+    {
+        return new self(
+            (new Finder())->in($dir)->in($moreDirs)->files()->name('*.php')->sortByName()->followLinks()
+        );
+    }
+
+    /**
+     * Looks for OpenAPI/Swagger annotations in the symfony flex default "src" directory based on a composer install.
+     */
+    public static function fromSrcDirectory(): self
+    {
+        return self::fromDirectories(__DIR__.'/../../../../src');
     }
 
     public function __invoke(): RouteCollection

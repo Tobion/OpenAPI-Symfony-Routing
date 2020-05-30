@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tobion\OpenApiSymfonyRouting\Tests;
 
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Finder\Exception\DirectoryNotFoundException;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\RouteCollection;
@@ -25,8 +26,7 @@ class OpenApiRouteLoaderTest extends TestCase
 
     public function testBasic(): void
     {
-        $finder = (new Finder())->in(__DIR__.'/Fixtures/Basic');
-        $routeLoader = new OpenApiRouteLoader($finder);
+        $routeLoader = OpenApiRouteLoader::fromDirectories(__DIR__.'/Fixtures/Basic');
 
         $routes = $routeLoader->__invoke();
 
@@ -36,13 +36,12 @@ class OpenApiRouteLoaderTest extends TestCase
             (new Route('/foobar'))->setMethods('GET')->setDefault('_controller', BasicController::class.'::__invoke')
         );
 
-        $this->assertEquals($expectedRoutes, $routes);
+        self::assertEquals($expectedRoutes, $routes);
     }
 
     public function testFormatSuffix(): void
     {
-        $finder = (new Finder())->in(__DIR__.'/Fixtures/FormatSuffix');
-        $routeLoader = new OpenApiRouteLoader($finder);
+        $routeLoader = OpenApiRouteLoader::fromDirectories(__DIR__.'/Fixtures/FormatSuffix');
 
         $routes = $routeLoader->__invoke();
 
@@ -60,13 +59,12 @@ class OpenApiRouteLoaderTest extends TestCase
             (new Route('/c'))->setMethods('GET')->setDefault('_controller', FormatSuffixController::class.'::disableFormatSuffix')
         );
 
-        $this->assertEquals($expectedRoutes, $routes);
+        self::assertEquals($expectedRoutes, $routes);
     }
 
     public function testOperationId(): void
     {
-        $finder = (new Finder())->in(__DIR__.'/Fixtures/OperationId');
-        $routeLoader = new OpenApiRouteLoader($finder);
+        $routeLoader = OpenApiRouteLoader::fromDirectories(__DIR__.'/Fixtures/OperationId');
 
         $routes = $routeLoader->__invoke();
 
@@ -76,13 +74,12 @@ class OpenApiRouteLoaderTest extends TestCase
             (new Route('/foobar'))->setMethods('GET')->setDefault('_controller', OperationIdController::class.'::__invoke')
         );
 
-        $this->assertEquals($expectedRoutes, $routes);
+        self::assertEquals($expectedRoutes, $routes);
     }
 
     public function testPathParameterPattern(): void
     {
-        $finder = (new Finder())->in(__DIR__.'/Fixtures/PathParameterPattern');
-        $routeLoader = new OpenApiRouteLoader($finder);
+        $routeLoader = OpenApiRouteLoader::fromDirectories(__DIR__.'/Fixtures/PathParameterPattern');
 
         $routes = $routeLoader->__invoke();
 
@@ -97,13 +94,12 @@ class OpenApiRouteLoaderTest extends TestCase
             (new Route('/bar/{id}'))->setRequirement('id', '^[a-zA-Z0-9]+$')->setMethods('GET')->setDefault('_controller', PathParameterPatternController::class.'::withPattern')
         );
 
-        $this->assertEquals($expectedRoutes, $routes);
+        self::assertEquals($expectedRoutes, $routes);
     }
 
     public function testSeveralClasses(): void
     {
-        $finder = (new Finder())->in(__DIR__.'/Fixtures/SeveralClasses')->files();
-        $routeLoader = new OpenApiRouteLoader($finder);
+        $routeLoader = OpenApiRouteLoader::fromDirectories(__DIR__.'/Fixtures/SeveralClasses');
 
         $routes = $routeLoader->__invoke();
 
@@ -121,13 +117,12 @@ class OpenApiRouteLoaderTest extends TestCase
             (new Route('/sub'))->setMethods('GET')->setDefault('_controller', SubController::class.'::__invoke')
         );
 
-        $this->assertEquals($expectedRoutes, $routes);
+        self::assertEquals($expectedRoutes, $routes);
     }
 
     public function testSeveralHttpMethods(): void
     {
-        $finder = (new Finder())->in(__DIR__.'/Fixtures/SeveralHttpMethods');
-        $routeLoader = new OpenApiRouteLoader($finder);
+        $routeLoader = OpenApiRouteLoader::fromDirectories(__DIR__.'/Fixtures/SeveralHttpMethods');
 
         $routes = $routeLoader->__invoke();
 
@@ -149,13 +144,12 @@ class OpenApiRouteLoaderTest extends TestCase
             (new Route('/foobar'))->setMethods('DELETE')->setDefault('_controller', SeveralHttpMethodsController::class.'::delete')
         );
 
-        $this->assertEquals($expectedRoutes, $routes);
+        self::assertEquals($expectedRoutes, $routes);
     }
 
     public function testSeveralRoutesOnOneAction(): void
     {
-        $finder = (new Finder())->in(__DIR__.'/Fixtures/SeveralRoutesOnOneAction');
-        $routeLoader = new OpenApiRouteLoader($finder);
+        $routeLoader = OpenApiRouteLoader::fromDirectories(__DIR__.'/Fixtures/SeveralRoutesOnOneAction');
 
         $routes = $routeLoader->__invoke();
 
@@ -173,6 +167,33 @@ class OpenApiRouteLoaderTest extends TestCase
             (new Route('/foo-bar'))->setMethods('GET')->setDefault('_controller', SeveralRoutesOnOneActionController::class.'::__invoke')
         );
 
-        $this->assertEquals($expectedRoutes, $routes);
+        self::assertEquals($expectedRoutes, $routes);
+    }
+
+    public function testSeveralDirectories(): void
+    {
+        $routeLoader = OpenApiRouteLoader::fromDirectories(__DIR__.'/Fixtures/Basic', __DIR__.'/Fixtures/SeveralClasses/SubNamespace');
+
+        $routes = $routeLoader->__invoke();
+
+        $expectedRoutes = new RouteCollection();
+        $expectedRoutes->add(
+            self::FIXTURES_ROUTE_NAME_PREFIX.'basic__invoke',
+            (new Route('/foobar'))->setMethods('GET')->setDefault('_controller', BasicController::class.'::__invoke')
+        );
+        $expectedRoutes->add(
+            self::FIXTURES_ROUTE_NAME_PREFIX.'severalclasses_subnamespace_sub__invoke',
+            (new Route('/sub'))->setMethods('GET')->setDefault('_controller', SubController::class.'::__invoke')
+        );
+
+        self::assertEquals($expectedRoutes, $routes);
+    }
+
+    public function testSrcDirectoryDoesNotExist(): void
+    {
+        self::expectException(DirectoryNotFoundException::class);
+        self::expectExceptionMessage('/../../../../src" directory does not exist');
+
+        OpenApiRouteLoader::fromSrcDirectory();
     }
 }
