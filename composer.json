@@ -16,11 +16,12 @@
         "symfony/finder": "^4.4|^5.0",
         "symfony/framework-bundle": "^4.4|^5.0",
         "symfony/routing": "^4.4|^5.0",
-        "zircote/swagger-php": "^2.0"
+        "zircote/swagger-php": "^2.0.14"
     },
     "require-dev": {
         "symfony/phpunit-bridge": "^5.0@dev"
     },
+    "minimum-stability": "dev",
     "autoload": {
         "psr-4": {
             "Tobion\\OpenApiSymfonyRouting\\": "src/"

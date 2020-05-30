@@ -13,47 +13,49 @@ use Symfony\Component\Routing\RouteCollection;
 class OpenApiRouteLoader implements RouteLoaderInterface
 {
     /**
-     * @var string[]
+     * @var Finder
      */
-    private $sourceDirectories;
-
-    /**
-     * @var string
-     */
-    private $sourcePattern;
+    private $finder;
 
     /**
      * @var array<string, int>
      */
     private $routeNames = [];
 
-    /**
-     * @param string[] $sourceDirectories
-     */
     public function __construct(
-        array $sourceDirectories,
-        string $sourcePattern = '/\.php/'
+        ?Finder $finder = null
     ) {
-        $this->sourceDirectories = $sourceDirectories;
-        $this->sourcePattern = $sourcePattern;
+        if (null === $finder) {
+            // try to use the symfony flex default src directory based on a composer install
+            $srcDir = __DIR__.'/../../../../src';
+            $realPath = realpath($srcDir);
+            if (!$realPath || !is_dir($realPath)) {
+                throw new \LogicException(sprintf('The default directory to look for OpenAPI/Swagger annotations "%s" does not exist. Please configure the finder explicitly.'));
+            }
+
+            $finder = (new Finder())->in($realPath)->files()->name('*.php')->sortByName()->followLinks();
+        }
+
+        $this->finder = $finder;
     }
 
     public function __invoke(): RouteCollection
     {
-        $finder = new Finder();
-        $finder->in($this->sourceDirectories)->path($this->sourcePattern);
-
-        $fullSwagger = \Swagger\scan($finder);
+        $fullSwagger = \Swagger\scan($this->finder);
         $routeCollection = new RouteCollection();
 
+        $globalFormatSuffixConfig = FormatSuffixConfig::fromAnnotation($fullSwagger);
+
         foreach ($fullSwagger->paths as $path) {
-            $this->addRouteFromSwaggerOperation($routeCollection, $path->get);
-            $this->addRouteFromSwaggerOperation($routeCollection, $path->put);
-            $this->addRouteFromSwaggerOperation($routeCollection, $path->post);
-            $this->addRouteFromSwaggerOperation($routeCollection, $path->delete);
-            $this->addRouteFromSwaggerOperation($routeCollection, $path->options);
-            $this->addRouteFromSwaggerOperation($routeCollection, $path->head);
-            $this->addRouteFromSwaggerOperation($routeCollection, $path->patch);
+            $pathFormatSuffixConfig = FormatSuffixConfig::fromAnnotation($path, $globalFormatSuffixConfig);
+
+            $this->addRouteFromSwaggerOperation($routeCollection, $path->get, $pathFormatSuffixConfig);
+            $this->addRouteFromSwaggerOperation($routeCollection, $path->put, $pathFormatSuffixConfig);
+            $this->addRouteFromSwaggerOperation($routeCollection, $path->post, $pathFormatSuffixConfig);
+            $this->addRouteFromSwaggerOperation($routeCollection, $path->delete, $pathFormatSuffixConfig);
+            $this->addRouteFromSwaggerOperation($routeCollection, $path->options, $pathFormatSuffixConfig);
+            $this->addRouteFromSwaggerOperation($routeCollection, $path->head, $pathFormatSuffixConfig);
+            $this->addRouteFromSwaggerOperation($routeCollection, $path->patch, $pathFormatSuffixConfig);
         }
 
         $this->routeNames = [];
@@ -61,7 +63,7 @@ class OpenApiRouteLoader implements RouteLoaderInterface
         return $routeCollection;
     }
 
-    private function addRouteFromSwaggerOperation(RouteCollection $routeCollection, ?Operation $operation): void
+    private function addRouteFromSwaggerOperation(RouteCollection $routeCollection, ?Operation $operation, FormatSuffixConfig $parentFormatSuffixConfig): void
     {
         if (null === $operation) {
             return;
@@ -69,21 +71,25 @@ class OpenApiRouteLoader implements RouteLoaderInterface
 
         $controller = $this->getControllerFromSwaggerOperation($operation);
         $name = $this->getRouteName($operation, $controller);
-        $route = $this->createRoute($operation, $controller);
+        $route = $this->createRoute($operation, $controller, $parentFormatSuffixConfig);
         $routeCollection->add($name, $route);
     }
 
-    private function createRoute(Operation $operation, string $controller): Route
+    private function createRoute(Operation $operation, string $controller, FormatSuffixConfig $parentFormatSuffixConfig): Route
     {
-        $formatSuffix = $operation->x['format-suffix'] ?? true;
-        $path = $formatSuffix ? $operation->path.'.{_format}' : $operation->path;
+        $formatSuffixConfig = FormatSuffixConfig::fromAnnotation($operation, $parentFormatSuffixConfig);
+
+        $path = $formatSuffixConfig->enabled ? $operation->path.'.{_format}' : $operation->path;
         $route = new Route($path);
         $route->setMethods($operation->method);
         $route->setDefault('_controller', $controller);
-        if ($formatSuffix) {
-            $formatPattern = $operation->x['format-pattern'] ?? 'json|xml';
+
+        if ($formatSuffixConfig->enabled) {
             $route->setDefault('_format', null);
-            $route->setRequirement('_format', $formatPattern);
+
+            if (null !== $formatSuffixConfig->pattern) {
+                $route->setRequirement('_format', $formatSuffixConfig->pattern);
+            }
         }
         if (null !== $operation->parameters) {
             foreach ($operation->parameters as $parameter) {
