@@ -11,7 +11,10 @@ use Swagger\Annotations as SWG;
  *     @SWG\Info(
  *         title="My API",
  *         version="1.0"
- *     )
+ *     ),
+ *     x={"format-suffix": {
+ *         "enabled": true
+ *     }}
  * )
  */
 class Controller
@@ -32,7 +35,9 @@ class Controller
     /**
      * @SWG\Get(
      *     path="/b",
-     *     x={"format-pattern": "json|xml"},
+     *     x={"format-suffix": {
+     *         "pattern": "json|xml"
+     *     }},
      *     @SWG\Response(
      *         response="200",
      *         description="Success",

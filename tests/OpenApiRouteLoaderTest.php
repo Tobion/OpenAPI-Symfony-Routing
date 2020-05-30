@@ -42,7 +42,7 @@ class OpenApiRouteLoaderTest extends TestCase
     public function testFormatSuffix(): void
     {
         $finder = (new Finder())->in(__DIR__.'/Fixtures/FormatSuffix');
-        $routeLoader = new OpenApiRouteLoader($finder, true);
+        $routeLoader = new OpenApiRouteLoader($finder);
 
         $routes = $routeLoader->__invoke();
 
