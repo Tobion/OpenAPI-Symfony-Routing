@@ -13,7 +13,7 @@ class SubController
      *     path="/sub",
      *     @SWG\Response(
      *         response="200",
-     *         description="Success",
+     *         description="Success"
      *     )
      * )
      */

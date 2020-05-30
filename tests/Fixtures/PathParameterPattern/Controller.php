@@ -27,7 +27,7 @@ class Controller
      *     ),
      *     @SWG\Response(
      *         response="200",
-     *         description="Success",
+     *         description="Success"
      *     )
      * )
      */
@@ -47,7 +47,7 @@ class Controller
      *     ),
      *     @SWG\Response(
      *         response="200",
-     *         description="Success",
+     *         description="Success"
      *     )
      * )
      */

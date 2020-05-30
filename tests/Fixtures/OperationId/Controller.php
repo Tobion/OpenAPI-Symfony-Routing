@@ -22,7 +22,7 @@ class Controller
      *     operationId="my-name",
      *     @SWG\Response(
      *         response="200",
-     *         description="Success",
+     *         description="Success"
      *     )
      * )
      */

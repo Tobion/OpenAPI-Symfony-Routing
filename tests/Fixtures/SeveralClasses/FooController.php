@@ -13,7 +13,7 @@ class FooController
      *     path="/foo",
      *     @SWG\Response(
      *         response="200",
-     *         description="Success",
+     *         description="Success"
      *     )
      * )
      */

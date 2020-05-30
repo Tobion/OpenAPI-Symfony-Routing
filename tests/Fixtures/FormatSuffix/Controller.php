@@ -24,7 +24,7 @@ class Controller
      *     path="/a",
      *     @SWG\Response(
      *         response="200",
-     *         description="Success",
+     *         description="Success"
      *     )
      * )
      */
@@ -40,7 +40,7 @@ class Controller
      *     }},
      *     @SWG\Response(
      *         response="200",
-     *         description="Success",
+     *         description="Success"
      *     )
      * )
      */
@@ -54,7 +54,7 @@ class Controller
      *     x={"format-suffix": false},
      *     @SWG\Response(
      *         response="200",
-     *         description="Success",
+     *         description="Success"
      *     )
      * )
      */

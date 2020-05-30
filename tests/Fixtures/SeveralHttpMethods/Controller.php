@@ -21,7 +21,7 @@ class Controller
      *     path="/foobar",
      *     @SWG\Response(
      *         response="200",
-     *         description="Success",
+     *         description="Success"
      *     )
      * )
      */
@@ -34,7 +34,7 @@ class Controller
      *     path="/foobar",
      *     @SWG\Response(
      *         response="200",
-     *         description="Success",
+     *         description="Success"
      *     )
      * )
      */
@@ -47,7 +47,7 @@ class Controller
      *     path="/foobar",
      *     @SWG\Response(
      *         response="200",
-     *         description="Success",
+     *         description="Success"
      *     )
      * )
      */
@@ -60,7 +60,7 @@ class Controller
      *     path="/foobar",
      *     @SWG\Response(
      *         response="200",
-     *         description="Success",
+     *         description="Success"
      *     )
      * )
      */

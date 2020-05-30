@@ -21,7 +21,7 @@ class BarController
      *     path="/bar",
      *     @SWG\Response(
      *         response="200",
-     *         description="Success",
+     *         description="Success"
      *     )
      * )
      */
