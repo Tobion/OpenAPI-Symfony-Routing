@@ -2,7 +2,7 @@
 
 Loads routes in Symfony based on [OpenAPI/Swagger annotations](https://github.com/zircote/swagger-php).
 
-![CI](https://github.com/Tobion/OpenAPI-Symfony-Routing/workflows/CI/badge.svg)
+[![CI](https://github.com/Tobion/OpenAPI-Symfony-Routing/workflows/CI/badge.svg)](https://github.com/Tobion/OpenAPI-Symfony-Routing/actions)
 
 ## Installation
 
@@ -42,10 +42,8 @@ This library provides an `OpenApiRouteLoader` that you need to define as service
 ```yaml
 # config/services.yaml
 services:
-    _defaults:
-        autoconfigure: true
-
     Tobion\OpenApiSymfonyRouting\OpenApiRouteLoader:
+        autoconfigure: true
         # Looks for OpenAPI/Swagger annotations in the symfony flex default "src" directory
         factory: [Tobion\OpenApiSymfonyRouting\OpenApiRouteLoader, fromSrcDirectory]
 ```
@@ -66,6 +64,7 @@ openapi_routes:
 ```yaml
 services:
     Tobion\OpenApiSymfonyRouting\OpenApiRouteLoader:
+        autoconfigure: true
         factory: [Tobion\OpenApiSymfonyRouting\OpenApiRouteLoader, fromDirectories]
         arguments:
             - '%kernel.project_dir%/src'
