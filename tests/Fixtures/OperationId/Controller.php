@@ -8,10 +8,7 @@ use Swagger\Annotations as SWG;
 
 /**
  * @SWG\Swagger(
- *     @SWG\Info(
- *         title="My API",
- *         version="1.0"
- *     )
+ *     @SWG\Info(title="My API", version="1.0")
  * )
  */
 class Controller
@@ -20,10 +17,7 @@ class Controller
      * @SWG\Get(
      *     path="/foobar",
      *     operationId="my-name",
-     *     @SWG\Response(
-     *         response="200",
-     *         description="Success"
-     *     )
+     *     @SWG\Response(response="200", description="Success")
      * )
      */
     public function __invoke(): void

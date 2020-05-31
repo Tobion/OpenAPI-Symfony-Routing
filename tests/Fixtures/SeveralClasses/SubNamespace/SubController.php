@@ -11,10 +11,7 @@ class SubController
     /**
      * @SWG\Get(
      *     path="/sub",
-     *     @SWG\Response(
-     *         response="200",
-     *         description="Success"
-     *     )
+     *     @SWG\Response(response="200", description="Success")
      * )
      */
     public function __invoke(): void

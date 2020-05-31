@@ -8,10 +8,7 @@ use Swagger\Annotations as SWG;
 
 /**
  * @SWG\Swagger(
- *     @SWG\Info(
- *         title="My API",
- *         version="1.0"
- *     )
+ *     @SWG\Info(title="My API", version="1.0")
  * )
  */
 class Controller
@@ -19,10 +16,7 @@ class Controller
     /**
      * @SWG\Get(
      *     path="/foobar",
-     *     @SWG\Response(
-     *         response="200",
-     *         description="Success"
-     *     )
+     *     @SWG\Response(response="200", description="Success")
      * )
      */
     public function get(): void
@@ -32,10 +26,7 @@ class Controller
     /**
      * @SWG\Put(
      *     path="/foobar",
-     *     @SWG\Response(
-     *         response="200",
-     *         description="Success"
-     *     )
+     *     @SWG\Response(response="200", description="Success")
      * )
      */
     public function put(): void
@@ -45,10 +36,7 @@ class Controller
     /**
      * @SWG\Post(
      *     path="/foobar",
-     *     @SWG\Response(
-     *         response="200",
-     *         description="Success"
-     *     )
+     *     @SWG\Response(response="200", description="Success")
      * )
      */
     public function post(): void
@@ -58,10 +46,7 @@ class Controller
     /**
      * @SWG\Delete(
      *     path="/foobar",
-     *     @SWG\Response(
-     *         response="200",
-     *         description="Success"
-     *     )
+     *     @SWG\Response(response="200", description="Success")
      * )
      */
     public function delete(): void

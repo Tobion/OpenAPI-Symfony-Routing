@@ -11,10 +11,7 @@ class FooController
     /**
      * @SWG\Get(
      *     path="/foo",
-     *     @SWG\Response(
-     *         response="200",
-     *         description="Success"
-     *     )
+     *     @SWG\Response(response="200", description="Success")
      * )
      */
     public function __invoke(): void
