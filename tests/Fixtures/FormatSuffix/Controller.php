@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Tobion\OpenApiSymfonyRouting\Tests\Fixtures\FormatSuffix;
 
-use Swagger\Annotations as SWG;
+use Openapi\Annotations as OA;
 
 /**
- * @SWG\Swagger(
- *     @SWG\Info(title="My API", version="1.0"),
+ * @OA\OpenApi(
+ *     @OA\Info(title="My API", version="1.0"),
  *     x={"format-suffix": {
  *         "enabled": true
  *     }}
@@ -17,9 +17,9 @@ use Swagger\Annotations as SWG;
 class Controller
 {
     /**
-     * @SWG\Get(
+     * @OA\Get(
      *     path="/a",
-     *     @SWG\Response(response="200", description="Success")
+     *     @OA\Response(response="200", description="Success")
      * )
      */
     public function inheritEnabledFormatSuffix(): void
@@ -27,12 +27,12 @@ class Controller
     }
 
     /**
-     * @SWG\Get(
+     * @OA\Get(
      *     path="/b",
      *     x={"format-suffix": {
      *         "pattern": "json|xml"
      *     }},
-     *     @SWG\Response(response="200", description="Success")
+     *     @OA\Response(response="200", description="Success")
      * )
      */
     public function defineFormatPattern(): void
@@ -40,10 +40,10 @@ class Controller
     }
 
     /**
-     * @SWG\Get(
+     * @OA\Get(
      *     path="/c",
      *     x={"format-suffix": false},
-     *     @SWG\Response(response="200", description="Success")
+     *     @OA\Response(response="200", description="Success")
      * )
      */
     public function disableFormatSuffix(): void

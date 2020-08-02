@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tobion\OpenApiSymfonyRouting;
 
-use Swagger\Annotations\Operation;
+use OpenApi\Annotations\Operation;
 use Symfony\Bundle\FrameworkBundle\Routing\RouteLoaderInterface;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Routing\Route;
@@ -35,7 +35,7 @@ class OpenApiRouteLoader implements RouteLoaderInterface
     }
 
     /**
-     * Looks for OpenAPI/Swagger annotations in the symfony flex default "src" directory based on a composer install.
+     * Looks for OpenAPI annotations in the symfony flex default "src" directory based on a composer install.
      */
     public static function fromSrcDirectory(): self
     {
@@ -44,21 +44,21 @@ class OpenApiRouteLoader implements RouteLoaderInterface
 
     public function __invoke(): RouteCollection
     {
-        $fullSwagger = \Swagger\scan($this->finder);
+        $fullOpenapi = \Openapi\scan($this->finder);
         $routeCollection = new RouteCollection();
 
-        $globalFormatSuffixConfig = FormatSuffixConfig::fromAnnotation($fullSwagger);
+        $globalFormatSuffixConfig = FormatSuffixConfig::fromAnnotation($fullOpenapi);
 
-        foreach ($fullSwagger->paths as $path) {
+        foreach ($fullOpenapi->paths as $path) {
             $pathFormatSuffixConfig = FormatSuffixConfig::fromAnnotation($path, $globalFormatSuffixConfig);
 
-            $this->addRouteFromSwaggerOperation($routeCollection, $path->get, $pathFormatSuffixConfig);
-            $this->addRouteFromSwaggerOperation($routeCollection, $path->put, $pathFormatSuffixConfig);
-            $this->addRouteFromSwaggerOperation($routeCollection, $path->post, $pathFormatSuffixConfig);
-            $this->addRouteFromSwaggerOperation($routeCollection, $path->delete, $pathFormatSuffixConfig);
-            $this->addRouteFromSwaggerOperation($routeCollection, $path->options, $pathFormatSuffixConfig);
-            $this->addRouteFromSwaggerOperation($routeCollection, $path->head, $pathFormatSuffixConfig);
-            $this->addRouteFromSwaggerOperation($routeCollection, $path->patch, $pathFormatSuffixConfig);
+            $this->addRouteFromOpenapiOperation($routeCollection, $path->get, $pathFormatSuffixConfig);
+            $this->addRouteFromOpenapiOperation($routeCollection, $path->put, $pathFormatSuffixConfig);
+            $this->addRouteFromOpenapiOperation($routeCollection, $path->post, $pathFormatSuffixConfig);
+            $this->addRouteFromOpenapiOperation($routeCollection, $path->delete, $pathFormatSuffixConfig);
+            $this->addRouteFromOpenapiOperation($routeCollection, $path->options, $pathFormatSuffixConfig);
+            $this->addRouteFromOpenapiOperation($routeCollection, $path->head, $pathFormatSuffixConfig);
+            $this->addRouteFromOpenapiOperation($routeCollection, $path->patch, $pathFormatSuffixConfig);
         }
 
         $this->routeNames = [];
@@ -66,13 +66,16 @@ class OpenApiRouteLoader implements RouteLoaderInterface
         return $routeCollection;
     }
 
-    private function addRouteFromSwaggerOperation(RouteCollection $routeCollection, ?Operation $operation, FormatSuffixConfig $parentFormatSuffixConfig): void
+    /**
+     * @param Operation|string $operation
+     */
+    private function addRouteFromOpenapiOperation(RouteCollection $routeCollection, $operation, FormatSuffixConfig $parentFormatSuffixConfig): void
     {
-        if (null === $operation) {
+        if (\Openapi\UNDEFINED === $operation) {
             return;
         }
 
-        $controller = $this->getControllerFromSwaggerOperation($operation);
+        $controller = $this->getControllerFromOpenapiOperation($operation);
         $name = $this->getRouteName($operation, $controller);
         $route = $this->createRoute($operation, $controller, $parentFormatSuffixConfig);
         $routeCollection->add($name, $route);
@@ -94,10 +97,10 @@ class OpenApiRouteLoader implements RouteLoaderInterface
                 $route->setRequirement('_format', $formatSuffixConfig->pattern);
             }
         }
-        if (null !== $operation->parameters) {
+        if (\Openapi\UNDEFINED !== $operation->parameters) {
             foreach ($operation->parameters as $parameter) {
-                if ('path' === $parameter->in && null !== $parameter->pattern) {
-                    $route->setRequirement($parameter->name, $parameter->pattern);
+                if ('path' === $parameter->in && \Openapi\UNDEFINED !== $parameter->schema->pattern) {
+                    $route->setRequirement($parameter->name, $parameter->schema->pattern);
                 }
             }
         }
@@ -105,7 +108,7 @@ class OpenApiRouteLoader implements RouteLoaderInterface
         return $route;
     }
 
-    private function getControllerFromSwaggerOperation(Operation $operation): string
+    private function getControllerFromOpenapiOperation(Operation $operation): string
     {
         $classOrService = ltrim($operation->_context->fullyQualifiedName($operation->_context->class), '\\');
 
@@ -114,7 +117,7 @@ class OpenApiRouteLoader implements RouteLoaderInterface
 
     private function getRouteName(Operation $operation, string $controller): string
     {
-        return \Swagger\UNDEFINED === $operation->operationId ? $this->getDefaultRouteName($controller) : $operation->operationId;
+        return $controller === $operation->operationId ? $this->getDefaultRouteName($controller) : $operation->operationId;
     }
 
     /**

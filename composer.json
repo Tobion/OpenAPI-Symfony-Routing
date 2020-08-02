@@ -9,19 +9,22 @@
         {
             "name": "Tobias Schultze",
             "homepage": "https://github.com/Tobion"
+        },
+        {
+            "name": "Kevin Szymura",
+            "homepage": "https://github.com/kswzr"
         }
     ],
     "require": {
-        "php": ">=7.2",
+        "php": ">=7.4",
         "symfony/finder": "^4.4|^5.0",
         "symfony/framework-bundle": "^4.4|^5.0",
         "symfony/routing": "^4.4|^5.0",
-        "zircote/swagger-php": "^2.0.14"
+        "zircote/swagger-php": "^3"
     },
     "require-dev": {
-        "symfony/phpunit-bridge": "^5.0@dev"
+        "phpunit/phpunit": "^8"
     },
-    "minimum-stability": "dev",
     "autoload": {
         "psr-4": {
             "Tobion\\OpenApiSymfonyRouting\\": "src/"
@@ -34,7 +37,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "1.x-dev"
+            "dev-master": "2.x-dev"
         }
     }
 }

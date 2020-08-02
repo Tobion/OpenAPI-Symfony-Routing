@@ -4,19 +4,19 @@ declare(strict_types=1);
 
 namespace Tobion\OpenApiSymfonyRouting\Tests\Fixtures\SeveralClasses;
 
-use Swagger\Annotations as SWG;
+use Openapi\Annotations as OA;
 
 /**
- * @SWG\Swagger(
- *     @SWG\Info(title="My API", version="1.0")
+ * @OA\Swagger(
+ *     @OA\Info(title="My API", version="1.0")
  * )
  */
 class BarController
 {
     /**
-     * @SWG\Get(
+     * @OA\Get(
      *     path="/bar",
-     *     @SWG\Response(response="200", description="Success")
+     *     @OA\Response(response="200", description="Success")
      * )
      */
     public function __invoke(): void

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tobion\OpenApiSymfonyRouting;
 
-use Swagger\Annotations\AbstractAnnotation;
+use OpenApi\Annotations\AbstractAnnotation;
 
 /**
  * @internal

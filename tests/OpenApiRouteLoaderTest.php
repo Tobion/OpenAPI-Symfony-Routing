@@ -6,7 +6,6 @@ namespace Tobion\OpenApiSymfonyRouting\Tests;
 
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Finder\Exception\DirectoryNotFoundException;
-use Symfony\Component\Finder\Finder;
 use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\RouteCollection;
 use Tobion\OpenApiSymfonyRouting\OpenApiRouteLoader;

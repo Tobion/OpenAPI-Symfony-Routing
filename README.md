@@ -16,19 +16,19 @@ This way you do not have to duplicate any routing information in Symfony. Consid
 [zircote/swagger-php](https://github.com/zircote/swagger-php) like the following example:
 
 ```php
-use Swagger\Annotations as SWG;
+use Openapi\Annotations as OA;
 
 /**
- * @SWG\Swagger(
- *     @SWG\Info(title="My API", version="1.0")
+ * @OA\OpenApi(
+ *     @OA\Info(title="My API", version="1.0")
  * )
  */
 class MyController
 {
     /**
-     * @SWG\Get(
+     * @OA\Get(
      *     path="/foobar",
-     *     @SWG\Response(response="200", description="Success")
+     *     @OA\Response(response="200", description="Success")
      * )
      */
     public function __invoke()
@@ -77,15 +77,15 @@ By default routes are auto-named based on the controller class and method. If yo
 an explicit name, you can do so using the OpenAPI `operationId` property:
 
 ```php
-use Swagger\Annotations as SWG;
+use Openapi\Annotations as OA;
 
 class MyController
 {
     /**
-     * @SWG\Get(
+     * @OA\Get(
      *     path="/foobar",
      *     operationId="my-name",
-     *     @SWG\Response(response="200", description="Success")
+     *     @OA\Response(response="200", description="Success")
      * )
      */
     public function __invoke()
@@ -102,18 +102,18 @@ The routing loader allows to add a `.{_format}` placeholder automatically to the
 and can be enabled using a `format-suffix` OpenAPI vendor extension:
 
 ```php
-use Swagger\Annotations as SWG;
+use Openapi\Annotations as OA;
 
 class MyController
 {
     /**
-     * @SWG\Get(
+     * @OA\Get(
      *     path="/foobar",
      *     x={"format-suffix": {
      *         "enabled": true,
      *         "pattern": "json|xml"
      *     }},
-     *     @SWG\Response(response="200", description="Success")
+     *     @OA\Response(response="200", description="Success")
      * )
      */
     public function __invoke()

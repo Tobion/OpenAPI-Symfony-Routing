@@ -4,30 +4,30 @@ declare(strict_types=1);
 
 namespace Tobion\OpenApiSymfonyRouting\Tests\Fixtures\SeveralRoutesOnOneAction;
 
-use Swagger\Annotations as SWG;
+use Openapi\Annotations as OA;
 
 /**
- * @SWG\Swagger(
- *     @SWG\Info(title="My API", version="1.0")
+ * @OA\OpenApi(
+ *     @OA\Info(title="My API", version="1.0")
  * )
  */
 class Controller
 {
     /**
-     * @SWG\Get(
+     * @OA\Get(
      *     path="/foobar",
-     *     @SWG\Response(response="200", description="Success")
+     *     @OA\Response(response="200", description="Success")
      * )
      *
-     * @SWG\Post(
+     * @OA\Post(
      *     path="/foobar",
-     *     @SWG\Response(response="200", description="Success")
+     *     @OA\Response(response="200", description="Success")
      * )
      *
-     * @SWG\Get(
+     * @OA\Get(
      *     path="/foo-bar",
      *     operationId="my-name",
-     *     @SWG\Response(response="200", description="Success")
+     *     @OA\Response(response="200", description="Success")
      * )
      */
     public function __invoke(): void
