@@ -54,6 +54,7 @@ jobs:
     build-php8:
         name: Build (PHP 8)
         runs-on: ubuntu-latest
+        continue-on-error: true
 
         steps:
             -   name: Set up PHP
