@@ -7,7 +7,7 @@ namespace Tobion\OpenApiSymfonyRouting\Tests\Fixtures\SeveralClasses;
 use Openapi\Annotations as OA;
 
 /**
- * @OA\Swagger(
+ * @OA\OpenApi(
  *     @OA\Info(title="My API", version="1.0")
  * )
  */
