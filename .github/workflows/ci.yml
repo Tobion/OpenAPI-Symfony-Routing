@@ -5,6 +5,9 @@ on:
         branches:
             - master
     pull_request:
+    workflow_dispatch:
+    schedule:
+        - cron: '0 11 26 * *'
 
 jobs:
     build-lowest-version:
