@@ -19,7 +19,7 @@
         "zircote/swagger-php": "^2.1"
     },
     "require-dev": {
-        "symfony/phpunit-bridge": "^5.0@dev"
+        "symfony/phpunit-bridge": "^5.2"
     },
     "autoload": {
         "psr-4": {
