@@ -6,7 +6,6 @@ namespace Tobion\OpenApiSymfonyRouting\Tests;
 
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Finder\Exception\DirectoryNotFoundException;
-use Symfony\Component\Finder\Finder;
 use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\RouteCollection;
 use Tobion\OpenApiSymfonyRouting\OpenApiRouteLoader;
@@ -14,6 +13,7 @@ use Tobion\OpenApiSymfonyRouting\Tests\Fixtures\Basic\Controller as BasicControl
 use Tobion\OpenApiSymfonyRouting\Tests\Fixtures\FormatSuffix\Controller as FormatSuffixController;
 use Tobion\OpenApiSymfonyRouting\Tests\Fixtures\OperationId\Controller as OperationIdController;
 use Tobion\OpenApiSymfonyRouting\Tests\Fixtures\PathParameterPattern\Controller as PathParameterPatternController;
+use Tobion\OpenApiSymfonyRouting\Tests\Fixtures\Priority\Controller as PriorityController;
 use Tobion\OpenApiSymfonyRouting\Tests\Fixtures\SeveralClasses\BarController;
 use Tobion\OpenApiSymfonyRouting\Tests\Fixtures\SeveralClasses\FooController;
 use Tobion\OpenApiSymfonyRouting\Tests\Fixtures\SeveralClasses\SubNamespace\SubController;
@@ -92,6 +92,31 @@ class OpenApiRouteLoaderTest extends TestCase
         $expectedRoutes->add(
             self::FIXTURES_ROUTE_NAME_PREFIX.'pathparameterpattern_withpattern',
             (new Route('/bar/{id}'))->setRequirement('id', '^[a-zA-Z0-9]+$')->setMethods('GET')->setDefault('_controller', PathParameterPatternController::class.'::withPattern')
+        );
+
+        self::assertEquals($expectedRoutes, $routes);
+    }
+
+    public function testPriority(): void
+    {
+        $routeLoader = OpenApiRouteLoader::fromDirectories(__DIR__.'/Fixtures/Priority');
+
+        $routes = $routeLoader->__invoke();
+
+        $expectedRoutes = new RouteCollection();
+        $expectedRoutes->add(
+            self::FIXTURES_ROUTE_NAME_PREFIX.'priority_foo',
+            (new Route('/foo'))->setMethods('GET')->setDefault('_controller', PriorityController::class.'::foo')
+        );
+        $expectedRoutes->add(
+            self::FIXTURES_ROUTE_NAME_PREFIX.'priority_catchall',
+            (new Route('/{catchall}'))->setMethods('GET')->setDefault('_controller', PriorityController::class.'::catchall'),
+            -100
+        );
+        $expectedRoutes->add(
+            self::FIXTURES_ROUTE_NAME_PREFIX.'priority_bar',
+            (new Route('/bar'))->setMethods('GET')->setDefault('_controller', PriorityController::class.'::bar'),
+            10
         );
 
         self::assertEquals($expectedRoutes, $routes);

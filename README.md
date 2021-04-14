@@ -126,6 +126,30 @@ The above example will create a route `/foobar.{_format}` where the format is op
 You can also enable the format-suffix globally by configuring it on the root Swagger annotation and disable it for
 certain routes again, see [test fixtures](./tests/Fixtures/FormatSuffix/Controller.php).
 
+### Order routes with priority
+
+Since Symfony 5.1, the order of routes defined using annotations can be [influenced using a priority](https://symfony.com/doc/current/routing.html#priority-parameter).
+This can be used to make sure templated routes do not match before concrete routes without parameters for the same URL.
+The priority can also be set on OpenAPI annotations using a `priority` vendor extension:
+
+```php
+use Swagger\Annotations as SWG;
+
+class MyController
+{
+    /**
+     * @SWG\Get(
+     *     path="/foobar",
+     *     x={"priority": 10},
+     *     @SWG\Response(response="200", description="Success")
+     * )
+     */
+    public function __invoke()
+    {
+    }
+}
+```
+
 ## Contributing
 
 To run tests:
