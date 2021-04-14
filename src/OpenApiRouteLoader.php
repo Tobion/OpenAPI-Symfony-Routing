@@ -75,7 +75,8 @@ class OpenApiRouteLoader implements RouteLoaderInterface
         $controller = $this->getControllerFromOpenApiOperation($operation);
         $name = $this->getRouteName($operation, $controller);
         $route = $this->createRoute($operation, $controller, $parentFormatSuffixConfig);
-        $routeCollection->add($name, $route);
+        $priority = $this->getRoutePriority($operation);
+        $routeCollection->add($name, $route, $priority);
     }
 
     private function createRoute(Operation $operation, string $controller, FormatSuffixConfig $parentFormatSuffixConfig): Route
@@ -115,6 +116,15 @@ class OpenApiRouteLoader implements RouteLoaderInterface
     private function getRouteName(Operation $operation, string $controller): string
     {
         return \Swagger\UNDEFINED === $operation->operationId ? $this->getDefaultRouteName($controller) : $operation->operationId;
+    }
+
+    private function getRoutePriority(Operation $operation): int
+    {
+        if (isset($operation->x['priority']) && is_int($operation->x['priority'])) {
+            return $operation->x['priority'];
+        }
+
+        return 0;
     }
 
     /**
