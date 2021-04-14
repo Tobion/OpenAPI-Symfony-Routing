@@ -4,19 +4,19 @@ declare(strict_types=1);
 
 namespace Tobion\OpenApiSymfonyRouting\Tests\Fixtures\SeveralHttpMethods;
 
-use Swagger\Annotations as SWG;
+use OpenApi\Annotations as OA;
 
 /**
- * @SWG\Swagger(
- *     @SWG\Info(title="My API", version="1.0")
+ * @OA\OpenApi(
+ *     @OA\Info(title="My API", version="1.0")
  * )
  */
 class Controller
 {
     /**
-     * @SWG\Get(
+     * @OA\Get(
      *     path="/foobar",
-     *     @SWG\Response(response="200", description="Success")
+     *     @OA\Response(response="200", description="Success")
      * )
      */
     public function get(): void
@@ -24,9 +24,9 @@ class Controller
     }
 
     /**
-     * @SWG\Put(
+     * @OA\Put(
      *     path="/foobar",
-     *     @SWG\Response(response="200", description="Success")
+     *     @OA\Response(response="200", description="Success")
      * )
      */
     public function put(): void
@@ -34,9 +34,9 @@ class Controller
     }
 
     /**
-     * @SWG\Post(
+     * @OA\Post(
      *     path="/foobar",
-     *     @SWG\Response(response="200", description="Success")
+     *     @OA\Response(response="200", description="Success")
      * )
      */
     public function post(): void
@@ -44,9 +44,9 @@ class Controller
     }
 
     /**
-     * @SWG\Delete(
+     * @OA\Delete(
      *     path="/foobar",
-     *     @SWG\Response(response="200", description="Success")
+     *     @OA\Response(response="200", description="Success")
      * )
      */
     public function delete(): void

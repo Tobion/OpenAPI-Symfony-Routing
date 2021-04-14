@@ -8,6 +8,11 @@ Loads routes in Symfony based on [OpenAPI/Swagger annotations](https://github.co
 
     $ composer require tobion/openapi-symfony-routing
 
+Version >= 1.2 requires zircote/swagger-php 3.x which is compatible with the OpenAPI Specification version 3.
+Version < 1.2 requires zircote/swagger-php 2.x which works with the OpenAPI Specification version 2 (fka Swagger).
+So tobion/openapi-symfony-routing can be used with both OpenAPI v2 and v3 and composer will select the compatible one for your dependencies.
+Route loading stays the same between version. You just need to update the annotations when migrating from OpenAPI v2 to v3.
+
 ## Basic Usage
 
 This library allows to (re-)use your OpenAPI documentation to configure the routing of your Symfony-based API.
@@ -16,19 +21,19 @@ This way you do not have to duplicate any routing information in Symfony. Consid
 [zircote/swagger-php](https://github.com/zircote/swagger-php) like the following example:
 
 ```php
-use Swagger\Annotations as SWG;
+use OpenApi\Annotations as OA;
 
 /**
- * @SWG\Swagger(
- *     @SWG\Info(title="My API", version="1.0")
+ * @OA\OpenApi(
+ *     @OA\Info(title="My API", version="1.0")
  * )
  */
 class MyController
 {
     /**
-     * @SWG\Get(
+     * @OA\Get(
      *     path="/foobar",
-     *     @SWG\Response(response="200", description="Success")
+     *     @OA\Response(response="200", description="Success")
      * )
      */
     public function __invoke()
@@ -77,15 +82,15 @@ By default routes are auto-named based on the controller class and method. If yo
 an explicit name, you can do so using the OpenAPI `operationId` property:
 
 ```php
-use Swagger\Annotations as SWG;
+use OpenApi\Annotations as OA;
 
 class MyController
 {
     /**
-     * @SWG\Get(
+     * @OA\Get(
      *     path="/foobar",
      *     operationId="my-name",
-     *     @SWG\Response(response="200", description="Success")
+     *     @OA\Response(response="200", description="Success")
      * )
      */
     public function __invoke()
@@ -102,18 +107,18 @@ The routing loader allows to add a `.{_format}` placeholder automatically to the
 and can be enabled using a `format-suffix` OpenAPI vendor extension:
 
 ```php
-use Swagger\Annotations as SWG;
+use OpenApi\Annotations as OA;
 
 class MyController
 {
     /**
-     * @SWG\Get(
+     * @OA\Get(
      *     path="/foobar",
      *     x={"format-suffix": {
      *         "enabled": true,
      *         "pattern": "json|xml"
      *     }},
-     *     @SWG\Response(response="200", description="Success")
+     *     @OA\Response(response="200", description="Success")
      * )
      */
     public function __invoke()
@@ -123,7 +128,7 @@ class MyController
 ```
 
 The above example will create a route `/foobar.{_format}` where the format is optional and can be json or xml.
-You can also enable the format-suffix globally by configuring it on the root Swagger annotation and disable it for
+You can also enable the format-suffix globally by configuring it on the root OpenApi annotation and disable it for
 certain routes again, see [test fixtures](./tests/Fixtures/FormatSuffix/Controller.php).
 
 ### Order routes with priority
@@ -133,15 +138,15 @@ This can be used to make sure templated routes do not match before concrete rout
 The priority can also be set on OpenAPI annotations using a `priority` vendor extension:
 
 ```php
-use Swagger\Annotations as SWG;
+use OpenApi\Annotations as OA;
 
 class MyController
 {
     /**
-     * @SWG\Get(
+     * @OA\Get(
      *     path="/foobar",
      *     x={"priority": 10},
-     *     @SWG\Response(response="200", description="Success")
+     *     @OA\Response(response="200", description="Success")
      * )
      */
     public function __invoke()

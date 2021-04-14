@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace Tobion\OpenApiSymfonyRouting\Tests\Fixtures\SeveralClasses\SubNamespace;
 
-use Swagger\Annotations as SWG;
+use OpenApi\Annotations as OA;
 
 class SubController
 {
     /**
-     * @SWG\Get(
+     * @OA\Get(
      *     path="/sub",
-     *     @SWG\Response(response="200", description="Success")
+     *     @OA\Response(response="200", description="Success")
      * )
      */
     public function __invoke(): void
