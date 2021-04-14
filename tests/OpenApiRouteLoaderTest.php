@@ -88,6 +88,10 @@ class OpenApiRouteLoaderTest extends TestCase
             self::FIXTURES_ROUTE_NAME_PREFIX.'pathparameterpattern_nopattern',
             (new Route('/foo/{id}'))->setMethods('GET')->setDefault('_controller', PathParameterPatternController::class.'::noPattern')
         );
+        $expectedRoutes->add(
+            self::FIXTURES_ROUTE_NAME_PREFIX.'pathparameterpattern_noschema',
+            (new Route('/baz/{id}'))->setMethods('GET')->setDefault('_controller', PathParameterPatternController::class.'::noSchema')
+        );
         // OpenAPI needs the param pattern to be anchored (^$) to have the desired effect. Symfony automatically trims those to get a valid full path regex.
         $expectedRoutes->add(
             self::FIXTURES_ROUTE_NAME_PREFIX.'pathparameterpattern_withpattern',

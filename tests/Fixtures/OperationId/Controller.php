@@ -4,20 +4,20 @@ declare(strict_types=1);
 
 namespace Tobion\OpenApiSymfonyRouting\Tests\Fixtures\OperationId;
 
-use Swagger\Annotations as SWG;
+use OpenApi\Annotations as OA;
 
 /**
- * @SWG\Swagger(
- *     @SWG\Info(title="My API", version="1.0")
+ * @OA\OpenApi(
+ *     @OA\Info(title="My API", version="1.0")
  * )
  */
 class Controller
 {
     /**
-     * @SWG\Get(
+     * @OA\Get(
      *     path="/foobar",
      *     operationId="my-name",
-     *     @SWG\Response(response="200", description="Success")
+     *     @OA\Response(response="200", description="Success")
      * )
      */
     public function __invoke(): void

@@ -4,25 +4,25 @@ declare(strict_types=1);
 
 namespace Tobion\OpenApiSymfonyRouting\Tests\Fixtures\PathParameterPattern;
 
-use Swagger\Annotations as SWG;
+use OpenApi\Annotations as OA;
 
 /**
- * @SWG\Swagger(
- *     @SWG\Info(title="My API", version="1.0")
+ * @OA\OpenApi(
+ *     @OA\Info(title="My API", version="1.0")
  * )
  */
 class Controller
 {
     /**
-     * @SWG\Get(
+     * @OA\Get(
      *     path="/foo/{id}",
-     *     @SWG\Parameter(
+     *     @OA\Parameter(
      *         name="id",
      *         in="path",
-     *         type="string",
-     *         required=true
+     *         required=true,
+     *         @OA\Schema(type="string")
      *     ),
-     *     @SWG\Response(response="200", description="Success")
+     *     @OA\Response(response="200", description="Success")
      * )
      */
     public function noPattern(): void
@@ -30,16 +30,30 @@ class Controller
     }
 
     /**
-     * @SWG\Get(
-     *     path="/bar/{id}",
-     *     @SWG\Parameter(
+     * @OA\Get(
+     *     path="/baz/{id}",
+     *     @OA\Parameter(
      *         name="id",
      *         in="path",
-     *         type="string",
-     *         required=true,
-     *         pattern="^[a-zA-Z0-9]+$"
+     *         required=true
      *     ),
-     *     @SWG\Response(response="200", description="Success")
+     *     @OA\Response(response="200", description="Success")
+     * )
+     */
+    public function noSchema(): void
+    {
+    }
+
+    /**
+     * @OA\Get(
+     *     path="/bar/{id}",
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(type="string", pattern="^[a-zA-Z0-9]+$")
+     *     ),
+     *     @OA\Response(response="200", description="Success")
      * )
      */
     public function withPattern(): void
