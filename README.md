@@ -11,7 +11,7 @@ Loads routes in Symfony based on [OpenAPI/Swagger annotations](https://github.co
 Version >= 1.2 requires zircote/swagger-php 3.x which is compatible with the OpenAPI Specification version 3.
 Version < 1.2 requires zircote/swagger-php 2.x which works with the OpenAPI Specification version 2 (fka Swagger).
 So tobion/openapi-symfony-routing can be used with both OpenAPI v2 and v3 and composer will select the compatible one for your dependencies.
-Route loading stays the same between version. You just need to update the annotations when migrating from OpenAPI v2 to v3.
+Route loading stays the same between those versions. You just need to update the annotations when migrating from OpenAPI v2 to v3.
 
 ## Basic Usage
 
