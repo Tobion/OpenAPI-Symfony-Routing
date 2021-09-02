@@ -10,8 +10,8 @@ on:
         - cron: '0 11 26 * *'
 
 jobs:
-    build-lowest-version:
-        name: Build lowest version
+    build-lowest-dependencies:
+        name: With lowest dependencies
         runs-on: ubuntu-latest
 
         steps:
@@ -52,4 +52,28 @@ jobs:
                 run: composer update --no-interaction --prefer-stable --no-progress --prefer-dist
 
             -   name: Run tests
+                run: vendor/bin/simple-phpunit
+
+    build-dev-dependencies:
+        name: With dev dependencies & PHP
+        runs-on: ubuntu-latest
+
+        steps:
+            -   name: Set up PHP
+                uses: shivammathur/setup-php@v2
+                with:
+                    php-version: 8.1
+                    coverage: 'none'
+
+            -   name: Checkout code
+                uses: actions/checkout@v2
+
+            -   name: Allow dev dependencies
+                run: composer config minimum-stability dev
+
+            -   name: Install dependencies
+                run: composer update --no-interaction --no-progress --prefer-dist
+
+            -   name: Run tests
+                continue-on-error: true
                 run: vendor/bin/simple-phpunit
