@@ -4,7 +4,12 @@ declare(strict_types=1);
 
 namespace Tobion\OpenApiSymfonyRouting;
 
+use OpenApi\Analysis;
+use OpenApi\Annotations\OpenApi;
 use OpenApi\Annotations\Operation;
+use OpenApi\Generator;
+use OpenApi\Processors\DocBlockDescriptions;
+use OpenApi\Processors\OperationId;
 use Symfony\Bundle\FrameworkBundle\Routing\RouteLoaderInterface;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Routing\Route;
@@ -22,9 +27,18 @@ class OpenApiRouteLoader implements RouteLoaderInterface
      */
     private $routeNames = [];
 
+    /**
+     * @var string
+     */
+    private static $openApiUndefined;
+
     public function __construct(Finder $finder)
     {
         $this->finder = $finder;
+
+        if (!isset(self::$openApiUndefined)) {
+            self::$openApiUndefined = \class_exists(Generator::class) ? Generator::UNDEFINED : \OpenApi\UNDEFINED;
+        }
     }
 
     public static function fromDirectories(string $dir, string ...$moreDirs): self
@@ -44,7 +58,7 @@ class OpenApiRouteLoader implements RouteLoaderInterface
 
     public function __invoke(): RouteCollection
     {
-        $openApi = \OpenApi\scan($this->finder);
+        $openApi = $this->createOpenApi();
         $routeCollection = new RouteCollection();
 
         $globalFormatSuffixConfig = FormatSuffixConfig::fromAnnotation($openApi);
@@ -66,12 +80,26 @@ class OpenApiRouteLoader implements RouteLoaderInterface
         return $routeCollection;
     }
 
+    private function createOpenApi(): OpenApi
+    {
+        if (!\class_exists(Generator::class)) {
+           return \OpenApi\scan($this->finder);
+        }
+
+        $processors = array_filter(Analysis::processors(), static function ($processor): bool {
+            // remove OperationId processor which would hash the controller starting in 3.2.2 breaking the default route name logic
+            return !$processor instanceof OperationId && !$processor instanceof DocBlockDescriptions;
+        });
+
+        return (new Generator())->setProcessors($processors)->generate($this->finder);
+    }
+
     /**
      * @param Operation|string $operation
      */
     private function addRouteFromOpenApiOperation(RouteCollection $routeCollection, $operation, FormatSuffixConfig $parentFormatSuffixConfig): void
     {
-        if (\OpenApi\UNDEFINED === $operation || !$operation instanceof Operation) {
+        if (self::$openApiUndefined === $operation || !$operation instanceof Operation) {
             return;
         }
 
@@ -98,9 +126,9 @@ class OpenApiRouteLoader implements RouteLoaderInterface
                 $route->setRequirement('_format', $formatSuffixConfig->pattern);
             }
         }
-        if (\OpenApi\UNDEFINED !== $operation->parameters) {
+        if (self::$openApiUndefined !== $operation->parameters) {
             foreach ($operation->parameters as $parameter) {
-                if ('path' === $parameter->in && \OpenApi\UNDEFINED !== $parameter->schema && \OpenApi\UNDEFINED !== $parameter->schema->pattern) {
+                if ('path' === $parameter->in && self::$openApiUndefined !== $parameter->schema && self::$openApiUndefined !== $parameter->schema->pattern) {
                     $route->setRequirement($parameter->name, $parameter->schema->pattern);
                 }
             }
@@ -121,7 +149,7 @@ class OpenApiRouteLoader implements RouteLoaderInterface
         // swagger-php v3 adds the controller as operationId automatically, see \OpenApi\Processors\OperationId.
         // This must be ignored as it is not viable with multiple annotations on the same controller.
 
-        return \OpenApi\UNDEFINED === $operation->operationId || $controller === $operation->operationId ? $this->getDefaultRouteName($controller) : $operation->operationId;
+        return self::$openApiUndefined === $operation->operationId || $controller === $operation->operationId ? $this->getDefaultRouteName($controller) : $operation->operationId;
     }
 
     private function getRoutePriority(Operation $operation): int
