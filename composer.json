@@ -13,13 +13,13 @@
     ],
     "require": {
         "php": ">=7.2",
-        "symfony/finder": "^4.4|^5.0",
-        "symfony/framework-bundle": "^4.4|^5.0",
-        "symfony/routing": "^4.4|^5.0",
+        "symfony/finder": "^4.4|^5.0|^6.0",
+        "symfony/framework-bundle": "^4.4|^5.0|^6.0",
+        "symfony/routing": "^4.4|^5.0|^6.0",
         "zircote/swagger-php": "^3.0.3"
     },
     "require-dev": {
-        "symfony/phpunit-bridge": "^5.2"
+        "symfony/phpunit-bridge": "^5.2|^6.0"
     },
     "autoload": {
         "psr-4": {
