@@ -2,20 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Tobion\OpenApiSymfonyRouting\Tests\Fixtures\Basic;
+namespace Tobion\OpenApiSymfonyRouting\Tests\Annotations\Fixtures\SeveralClasses;
 
 use OpenApi\Annotations as OA;
 
-/**
- * @OA\OpenApi(
- *     @OA\Info(title="My API", version="1.0")
- * )
- */
-class Controller
+class FooController
 {
     /**
      * @OA\Get(
-     *     path="/foobar",
+     *     path="/foo",
      *     @OA\Response(response="200", description="Success")
      * )
      */

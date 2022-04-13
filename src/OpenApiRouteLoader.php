@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Tobion\OpenApiSymfonyRouting;
 
+use OpenApi\Analysers\AttributeAnnotationFactory;
+use OpenApi\Analysers\DocBlockAnnotationFactory;
+use OpenApi\Analysers\ReflectionAnalyser;
 use OpenApi\Analysis;
 use OpenApi\Annotations\OpenApi;
 use OpenApi\Annotations\Operation;
@@ -86,12 +89,23 @@ class OpenApiRouteLoader implements RouteLoaderInterface
            return \OpenApi\scan($this->finder);
         }
 
-        $processors = array_filter(Analysis::processors(), static function ($processor): bool {
-            // remove OperationId processor which would hash the controller starting in 3.2.2 breaking the default route name logic
-            return !$processor instanceof OperationId && !$processor instanceof DocBlockDescriptions;
-        });
+        if (method_exists(Analysis::class, 'processors')) {
+            $processors = array_filter(Analysis::processors(), static function ($processor): bool {
+                // remove OperationId processor which would hash the controller starting in 3.2.2 breaking the default route name logic
+                return !$processor instanceof OperationId && !$processor instanceof DocBlockDescriptions;
+            });
 
-        return (new Generator())->setProcessors($processors)->generate($this->finder);
+            return (new Generator())->setProcessors($processors)->generate($this->finder);
+        }
+
+        $analyser = new ReflectionAnalyser([
+            new AttributeAnnotationFactory(),
+            new DocBlockAnnotationFactory()]
+        );
+
+        return (new Generator())
+            ->setAnalyser($analyser)
+            ->generate($this->finder);
     }
 
     /**

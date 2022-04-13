@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Tobion\OpenApiSymfonyRouting\Tests\Fixtures\SeveralClasses;
+namespace Tobion\OpenApiSymfonyRouting\Tests\Annotations\Fixtures\SeveralClasses\SubNamespace;
 
 use OpenApi\Annotations as OA;
 
-class FooController
+class SubController
 {
     /**
      * @OA\Get(
-     *     path="/foo",
+     *     path="/sub",
      *     @OA\Response(response="200", description="Success")
      * )
      */

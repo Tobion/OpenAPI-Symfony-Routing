@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tobion\OpenApiSymfonyRouting\Tests\Fixtures\PathParameterPattern;
+namespace Tobion\OpenApiSymfonyRouting\Tests\Annotations\Fixtures\PathParameterPattern;
 
 use OpenApi\Annotations as OA;
 
