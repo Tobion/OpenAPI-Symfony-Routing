@@ -112,19 +112,19 @@ class OpenApiRouteLoaderAnnotationsTest extends TestCase
         $routes = $routeLoader->__invoke();
 
         $expectedRoutes = [];
-        $expectedRoutes[] = (new Route('/bar'))
+        $expectedRoutes['/bar'] = (new Route('/bar'))
             ->setMethods('GET')
             ->setDefault('_controller', PriorityController::class.'::bar');
-        $expectedRoutes[] = (new Route('/foo'))
+        $expectedRoutes['/foo'] = (new Route('/foo'))
             ->setMethods('GET')
             ->setDefault('_controller', PriorityController::class.'::foo');
-        $expectedRoutes[] = (new Route('/{catchall}'))
+        $expectedRoutes['/{catchall}'] = (new Route('/{catchall}'))
             ->setMethods('GET')
             ->setDefault('_controller', PriorityController::class.'::catchall');
 
-        $index = 0;
         foreach ($routes as $route) {
-            $this->assertEquals($route, $expectedRoutes[$index++]);
+            $this->assertArrayHasKey($route->getPath(), $expectedRoutes);
+            $this->assertEquals($route, $expectedRoutes[$route->getPath()]);
         }
     }
 
