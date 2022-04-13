@@ -24,7 +24,7 @@ class OpenApiRouteLoaderAttributesTest extends TestCase
 {
     public function testBasic(): void
     {
-        $routeLoader = OpenApiRouteLoader::fromDirectories(__DIR__.'/Fixtures//Basic');
+        $routeLoader = OpenApiRouteLoader::fromDirectories(__DIR__.'/Fixtures/Basic');
 
         $routes = $routeLoader->__invoke();
 
@@ -40,7 +40,7 @@ class OpenApiRouteLoaderAttributesTest extends TestCase
 
     public function testFormatSuffix(): void
     {
-        $routeLoader = OpenApiRouteLoader::fromDirectories(__DIR__.'/Fixtures//FormatSuffix');
+        $routeLoader = OpenApiRouteLoader::fromDirectories(__DIR__.'/Fixtures/FormatSuffix');
 
         $routes = $routeLoader->__invoke();
 
@@ -66,7 +66,7 @@ class OpenApiRouteLoaderAttributesTest extends TestCase
 
     public function testOperationId(): void
     {
-        $routeLoader = OpenApiRouteLoader::fromDirectories(__DIR__.'/Fixtures//OperationId');
+        $routeLoader = OpenApiRouteLoader::fromDirectories(__DIR__.'/Fixtures/OperationId');
 
         $routes = $routeLoader->__invoke();
 
@@ -81,7 +81,7 @@ class OpenApiRouteLoaderAttributesTest extends TestCase
 
     public function testPathParameterPattern(): void
     {
-        $routeLoader = OpenApiRouteLoader::fromDirectories(__DIR__.'/Fixtures//PathParameterPattern');
+        $routeLoader = OpenApiRouteLoader::fromDirectories(__DIR__.'/Fixtures/PathParameterPattern');
 
         $routes = $routeLoader->__invoke();
 
@@ -105,7 +105,7 @@ class OpenApiRouteLoaderAttributesTest extends TestCase
 
     public function testPriority(): void
     {
-        $routeLoader = OpenApiRouteLoader::fromDirectories(__DIR__.'/Fixtures//Priority');
+        $routeLoader = OpenApiRouteLoader::fromDirectories(__DIR__.'/Fixtures/Priority');
 
         $routes = $routeLoader->__invoke();
 
@@ -128,7 +128,7 @@ class OpenApiRouteLoaderAttributesTest extends TestCase
 
     public function testSeveralClasses(): void
     {
-        $routeLoader = OpenApiRouteLoader::fromDirectories(__DIR__.'/Fixtures//SeveralClasses');
+        $routeLoader = OpenApiRouteLoader::fromDirectories(__DIR__.'/Fixtures/SeveralClasses');
 
         $routes = $routeLoader->__invoke();
 
@@ -151,7 +151,7 @@ class OpenApiRouteLoaderAttributesTest extends TestCase
 
     public function testSeveralHttpMethods(): void
     {
-        $routeLoader = OpenApiRouteLoader::fromDirectories(__DIR__.'/Fixtures//SeveralHttpMethods');
+        $routeLoader = OpenApiRouteLoader::fromDirectories(__DIR__.'/Fixtures/SeveralHttpMethods');
 
         $routes = $routeLoader->__invoke();
 
@@ -177,7 +177,7 @@ class OpenApiRouteLoaderAttributesTest extends TestCase
 
     public function testSeveralRoutesOnOneAction(): void
     {
-        $routeLoader = OpenApiRouteLoader::fromDirectories(__DIR__.'/Fixtures//SeveralRoutesOnOneAction');
+        $routeLoader = OpenApiRouteLoader::fromDirectories(__DIR__.'/Fixtures/SeveralRoutesOnOneAction');
 
         $routes = $routeLoader->__invoke();
 
@@ -201,8 +201,8 @@ class OpenApiRouteLoaderAttributesTest extends TestCase
     public function testSeveralDirectories(): void
     {
         $routeLoader = OpenApiRouteLoader::fromDirectories(
-            __DIR__.'/Fixtures//Basic',
-            __DIR__.'/Fixtures//SeveralClasses/SubNamespace'
+            __DIR__.'/Fixtures/Basic',
+            __DIR__.'/Fixtures/SeveralClasses/SubNamespace'
         );
 
         $routes = $routeLoader->__invoke();
