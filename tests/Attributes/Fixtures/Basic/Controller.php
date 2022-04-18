@@ -4,16 +4,13 @@ declare(strict_types=1);
 
 namespace Tobion\OpenApiSymfonyRouting\Tests\Attributes\Fixtures\Basic;
 
-use OpenApi\Attributes as OAT;
+use OpenApi\Attributes as OA;
 
-#[OAT\Info(version: "1.0", title: "My API")]
-class OpenApiSpec
-{}
-
+#[OA\Info(version: "1.0", title: "My API")]
 class Controller
 {
-    #[OAT\Get(path: "/foobar")]
-    #[OAT\Response(response: 200, description: "OK")]
+    #[OA\Get(path: "/foobar")]
+    #[OA\Response(response: 200, description: "OK")]
     public function __invoke(): void
     {
     }

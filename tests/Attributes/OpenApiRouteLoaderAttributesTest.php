@@ -20,22 +20,26 @@ use Tobion\OpenApiSymfonyRouting\Tests\Attributes\Fixtures\SeveralClasses\SubNam
 use Tobion\OpenApiSymfonyRouting\Tests\Attributes\Fixtures\SeveralHttpMethods\Controller as SeveralHttpMethodsController;
 use Tobion\OpenApiSymfonyRouting\Tests\Attributes\Fixtures\SeveralRoutesOnOneAction\Controller as SeveralRoutesOnOneActionController;
 
-class OpenApiRouteLoaderAttributesTest extends TestCase
+/**
+ * @requires PHP >= 8.1
+ */
+final class OpenApiRouteLoaderAttributesTest extends TestCase
 {
+    private const FIXTURES_ROUTE_NAME_PREFIX = 'tobion_openapisymfonyrouting_tests_attributes_fixtures_';
+
     public function testBasic(): void
     {
         $routeLoader = OpenApiRouteLoader::fromDirectories(__DIR__.'/Fixtures/Basic');
 
         $routes = $routeLoader->__invoke();
 
-        foreach ($routes as $route) {
-            $this->assertEquals(
-                $route,
-                (new Route('/foobar'))
-                    ->setMethods('GET')
-                    ->setDefault('_controller', BasicController::class.'::__invoke')
-            );
-        }
+        $expectedRoutes = new RouteCollection();
+        $expectedRoutes->add(
+            self::FIXTURES_ROUTE_NAME_PREFIX.'basic__invoke',
+            (new Route('/foobar'))->setMethods('GET')->setDefault('_controller', BasicController::class.'::__invoke')
+        );
+
+        self::assertEquals($expectedRoutes, $routes);
     }
 
     public function testFormatSuffix(): void
@@ -44,24 +48,21 @@ class OpenApiRouteLoaderAttributesTest extends TestCase
 
         $routes = $routeLoader->__invoke();
 
-        $expectedRoutes = [];
-        $expectedRoutes[] = (new Route('/a.{_format}'))
-            ->setDefault('_format', null)
-            ->setMethods('GET')
-            ->setDefault('_controller', FormatSuffixController::class.'::inheritEnabledFormatSuffix');
-        $expectedRoutes[] = (new Route('/b.{_format}'))
-            ->setDefault('_format', null)
-            ->setRequirement('_format', 'json|xml')
-            ->setMethods('GET')
-            ->setDefault('_controller', FormatSuffixController::class.'::defineFormatPattern');
-        $expectedRoutes[] = (new Route('/c'))
-            ->setMethods('GET')
-            ->setDefault('_controller', FormatSuffixController::class.'::disableFormatSuffix');
+        $expectedRoutes = new RouteCollection();
+        $expectedRoutes->add(
+            self::FIXTURES_ROUTE_NAME_PREFIX.'formatsuffix_inheritenabledformatsuffix',
+            (new Route('/a.{_format}'))->setDefault('_format', null)->setMethods('GET')->setDefault('_controller', FormatSuffixController::class.'::inheritEnabledFormatSuffix')
+        );
+        $expectedRoutes->add(
+            self::FIXTURES_ROUTE_NAME_PREFIX.'formatsuffix_defineformatpattern',
+            (new Route('/b.{_format}'))->setDefault('_format', null)->setRequirement('_format', 'json|xml')->setMethods('GET')->setDefault('_controller', FormatSuffixController::class.'::defineFormatPattern')
+        );
+        $expectedRoutes->add(
+            self::FIXTURES_ROUTE_NAME_PREFIX.'formatsuffix_disableformatsuffix',
+            (new Route('/c'))->setMethods('GET')->setDefault('_controller', FormatSuffixController::class.'::disableFormatSuffix')
+        );
 
-        $index = 0;
-        foreach ($routes as $route) {
-            $this->assertEquals($route, $expectedRoutes[$index++]);
-        }
+        self::assertEquals($expectedRoutes, $routes);
     }
 
     public function testOperationId(): void
@@ -85,22 +86,26 @@ class OpenApiRouteLoaderAttributesTest extends TestCase
 
         $routes = $routeLoader->__invoke();
 
-        $expectedRoutes = [];
-        $expectedRoutes[] = (new Route('/foo/{id}'))
-            ->setMethods('GET')
-            ->setDefault('_controller', PathParameterPatternController::class.'::noPattern');
-        $expectedRoutes[] = (new Route('/baz/{id}'))
-            ->setMethods('GET')
-            ->setDefault('_controller', PathParameterPatternController::class.'::noSchema');
-        $expectedRoutes[] = (new Route('/bar/{id}'))
-            ->setRequirement('id', '^[a-zA-Z0-9]+$')
-            ->setMethods('GET')
-            ->setDefault('_controller', PathParameterPatternController::class.'::withPattern');
+        $expectedRoutes = new RouteCollection();
+        $expectedRoutes->add(
+            self::FIXTURES_ROUTE_NAME_PREFIX.'pathparameterpattern_nopattern',
+            (new Route('/foo/{id}'))->setMethods('GET')->setDefault('_controller', PathParameterPatternController::class.'::noPattern')
+        );
+        $expectedRoutes->add(
+            self::FIXTURES_ROUTE_NAME_PREFIX.'pathparameterpattern_noschema',
+            (new Route('/baz/{id}'))->setMethods('GET')->setDefault('_controller', PathParameterPatternController::class.'::noSchema')
+        );
 
-        $index = 0;
-        foreach ($routes as $route) {
-            $this->assertEquals($route, $expectedRoutes[$index++]);
-        }
+        // OpenAPI needs the param pattern to be anchored (^$) to have the desired effect. Symfony automatically trims those to get a valid full path regex.
+        $expectedRoutes->add(
+            self::FIXTURES_ROUTE_NAME_PREFIX.'pathparameterpattern_withpattern',
+            (new Route('/bar/{id}/{type}'))
+                ->setRequirement('id', '^[a-zA-Z0-9]+$')
+                ->setRequirement('type', 'internal|external')
+                ->setMethods('GET')->setDefault('_controller', PathParameterPatternController::class.'::withPattern')
+        );
+
+        self::assertEquals($expectedRoutes, $routes);
     }
 
     public function testPriority(): void
@@ -109,21 +114,23 @@ class OpenApiRouteLoaderAttributesTest extends TestCase
 
         $routes = $routeLoader->__invoke();
 
-        $expectedRoutes = [];
-        $expectedRoutes[] = (new Route('/bar'))
-            ->setMethods('GET')
-            ->setDefault('_controller', PriorityController::class.'::bar');
-        $expectedRoutes[] = (new Route('/foo'))
-            ->setMethods('GET')
-            ->setDefault('_controller', PriorityController::class.'::foo');
-        $expectedRoutes[] = (new Route('/{catchall}'))
-            ->setMethods('GET')
-            ->setDefault('_controller', PriorityController::class.'::catchall');
+        $expectedRoutes = new RouteCollection();
+        $expectedRoutes->add(
+            self::FIXTURES_ROUTE_NAME_PREFIX.'priority_foo',
+            (new Route('/foo'))->setMethods('GET')->setDefault('_controller', PriorityController::class.'::foo')
+        );
+        $expectedRoutes->add(
+            self::FIXTURES_ROUTE_NAME_PREFIX.'priority_catchall',
+            (new Route('/{catchall}'))->setMethods('GET')->setDefault('_controller', PriorityController::class.'::catchall'),
+            -100
+        );
+        $expectedRoutes->add(
+            self::FIXTURES_ROUTE_NAME_PREFIX.'priority_bar',
+            (new Route('/bar'))->setMethods('GET')->setDefault('_controller', PriorityController::class.'::bar'),
+            10
+        );
 
-        $index = 0;
-        foreach ($routes as $route) {
-            $this->assertEquals($route, $expectedRoutes[$index++]);
-        }
+        self::assertEquals($expectedRoutes, $routes);
     }
 
     public function testSeveralClasses(): void
@@ -132,21 +139,21 @@ class OpenApiRouteLoaderAttributesTest extends TestCase
 
         $routes = $routeLoader->__invoke();
 
-        $expectedRoutes = [];
-        $expectedRoutes[] = (new Route('/bar'))
-            ->setMethods('GET')
-            ->setDefault('_controller', BarController::class.'::__invoke');
-        $expectedRoutes[] = (new Route('/foo'))
-            ->setMethods('GET')
-            ->setDefault('_controller', FooController::class.'::__invoke');
-        $expectedRoutes[] = (new Route('/sub'))
-            ->setMethods('GET')
-            ->setDefault('_controller', SubController::class.'::__invoke');
+        $expectedRoutes = new RouteCollection();
+        $expectedRoutes->add(
+            self::FIXTURES_ROUTE_NAME_PREFIX.'severalclasses_bar__invoke',
+            (new Route('/bar'))->setMethods('GET')->setDefault('_controller', BarController::class.'::__invoke')
+        );
+        $expectedRoutes->add(
+            self::FIXTURES_ROUTE_NAME_PREFIX.'severalclasses_foo__invoke',
+            (new Route('/foo'))->setMethods('GET')->setDefault('_controller', FooController::class.'::__invoke')
+        );
+        $expectedRoutes->add(
+            self::FIXTURES_ROUTE_NAME_PREFIX.'severalclasses_subnamespace_sub__invoke',
+            (new Route('/sub'))->setMethods('GET')->setDefault('_controller', SubController::class.'::__invoke')
+        );
 
-        $index = 0;
-        foreach ($routes as $route) {
-            $this->assertEquals($route, $expectedRoutes[$index++]);
-        }
+        self::assertEquals($expectedRoutes, $routes);
     }
 
     public function testSeveralHttpMethods(): void
@@ -155,24 +162,25 @@ class OpenApiRouteLoaderAttributesTest extends TestCase
 
         $routes = $routeLoader->__invoke();
 
-        $expectedRoutes = [];
-        $expectedRoutes[] = (new Route('/foobar'))
-            ->setMethods('GET')
-            ->setDefault('_controller', SeveralHttpMethodsController::class.'::get');
-        $expectedRoutes[] = (new Route('/foobar'))
-            ->setMethods('PUT')
-            ->setDefault('_controller', SeveralHttpMethodsController::class.'::put');
-        $expectedRoutes[] = (new Route('/foobar'))
-            ->setMethods('POST')
-            ->setDefault('_controller', SeveralHttpMethodsController::class.'::post');
-        $expectedRoutes[] = (new Route('/foobar'))
-            ->setMethods('DELETE')
-            ->setDefault('_controller', SeveralHttpMethodsController::class.'::delete');
+        $expectedRoutes = new RouteCollection();
+        $expectedRoutes->add(
+            self::FIXTURES_ROUTE_NAME_PREFIX.'severalhttpmethods_get',
+            (new Route('/foobar'))->setMethods('GET')->setDefault('_controller', SeveralHttpMethodsController::class.'::get')
+        );
+        $expectedRoutes->add(
+            self::FIXTURES_ROUTE_NAME_PREFIX.'severalhttpmethods_put',
+            (new Route('/foobar'))->setMethods('PUT')->setDefault('_controller', SeveralHttpMethodsController::class.'::put')
+        );
+        $expectedRoutes->add(
+            self::FIXTURES_ROUTE_NAME_PREFIX.'severalhttpmethods_post',
+            (new Route('/foobar'))->setMethods('POST')->setDefault('_controller', SeveralHttpMethodsController::class.'::post')
+        );
+        $expectedRoutes->add(
+            self::FIXTURES_ROUTE_NAME_PREFIX.'severalhttpmethods_delete',
+            (new Route('/foobar'))->setMethods('DELETE')->setDefault('_controller', SeveralHttpMethodsController::class.'::delete')
+        );
 
-        $index = 0;
-        foreach ($routes as $route) {
-            $this->assertEquals($route, $expectedRoutes[$index++]);
-        }
+        self::assertEquals($expectedRoutes, $routes);
     }
 
     public function testSeveralRoutesOnOneAction(): void
@@ -181,44 +189,40 @@ class OpenApiRouteLoaderAttributesTest extends TestCase
 
         $routes = $routeLoader->__invoke();
 
-        $expectedRoutes = [];
-        $expectedRoutes[] = (new Route('/foobar'))
-            ->setMethods('GET')
-            ->setDefault('_controller', SeveralRoutesOnOneActionController::class.'::__invoke');
-        $expectedRoutes[] = (new Route('/foobar'))
-            ->setMethods('POST')
-            ->setDefault('_controller', SeveralRoutesOnOneActionController::class.'::__invoke');
-        $expectedRoutes[] = (new Route('/foo-bar'))
-            ->setMethods('GET')
-            ->setDefault('_controller', SeveralRoutesOnOneActionController::class.'::__invoke');
+        $expectedRoutes = new RouteCollection();
+        $expectedRoutes->add(
+            self::FIXTURES_ROUTE_NAME_PREFIX.'severalroutesononeaction__invoke',
+            (new Route('/foobar'))->setMethods('GET')->setDefault('_controller', SeveralRoutesOnOneActionController::class.'::__invoke')
+        );
+        $expectedRoutes->add(
+            self::FIXTURES_ROUTE_NAME_PREFIX.'severalroutesononeaction__invoke_1',
+            (new Route('/foobar'))->setMethods('POST')->setDefault('_controller', SeveralRoutesOnOneActionController::class.'::__invoke')
+        );
+        $expectedRoutes->add(
+            'my-name',
+            (new Route('/foo-bar'))->setMethods('GET')->setDefault('_controller', SeveralRoutesOnOneActionController::class.'::__invoke')
+        );
 
-        $index = 0;
-        foreach ($routes as $route) {
-            $this->assertEquals($route, $expectedRoutes[$index++]);
-        }
+        self::assertEquals($expectedRoutes, $routes);
     }
 
     public function testSeveralDirectories(): void
     {
-        $routeLoader = OpenApiRouteLoader::fromDirectories(
-            __DIR__.'/Fixtures/Basic',
-            __DIR__.'/Fixtures/SeveralClasses/SubNamespace'
-        );
+        $routeLoader = OpenApiRouteLoader::fromDirectories(__DIR__.'/Fixtures/Basic', __DIR__.'/Fixtures/SeveralClasses/SubNamespace');
 
         $routes = $routeLoader->__invoke();
 
-        $expectedRoutes = [];
-        $expectedRoutes[] = (new Route('/foobar'))
-            ->setMethods('GET')
-            ->setDefault('_controller', BasicController::class.'::__invoke');
-        $expectedRoutes[] = (new Route('/sub'))
-            ->setMethods('GET')
-            ->setDefault('_controller', SubController::class.'::__invoke');
+        $expectedRoutes = new RouteCollection();
+        $expectedRoutes->add(
+            self::FIXTURES_ROUTE_NAME_PREFIX.'basic__invoke',
+            (new Route('/foobar'))->setMethods('GET')->setDefault('_controller', BasicController::class.'::__invoke')
+        );
+        $expectedRoutes->add(
+            self::FIXTURES_ROUTE_NAME_PREFIX.'severalclasses_subnamespace_sub__invoke',
+            (new Route('/sub'))->setMethods('GET')->setDefault('_controller', SubController::class.'::__invoke')
+        );
 
-        $index = 0;
-        foreach ($routes as $route) {
-            $this->assertEquals($route, $expectedRoutes[$index++]);
-        }
+        self::assertEquals($expectedRoutes, $routes);
     }
 
     public function testSrcDirectoryDoesNotExist(): void

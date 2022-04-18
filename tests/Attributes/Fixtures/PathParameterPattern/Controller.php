@@ -4,34 +4,36 @@ declare(strict_types=1);
 
 namespace Tobion\OpenApiSymfonyRouting\Tests\Attributes\Fixtures\PathParameterPattern;
 
-use OpenApi\Attributes as OAT;
+use mysql_xdevapi\Schema;
+use OpenApi\Attributes as OA;
 
-#[OAT\Info(title: "My API", version: "1.0")]
+#[OA\Info(title: "My API", version: "1.0")]
 class Controller
 {
-    #[OAT\Get(path: "/foo/{id}")]
-    #[OAT\Parameter(name:"id", in:"path", required:true, schema: new OAT\Schema(type:"string"))]
-    #[OAT\Response(response:"200", description:"Success")]
-    public function noPattern(): void
+    #[OA\Get(path: "/foo/{id}")]
+    #[OA\Response(response:"200", description:"Success")]
+    public function noPattern(
+        #[OA\Parameter]string $id
+    ): void
     {
     }
 
-    #[OAT\Get(path: "/baz/{id}")]
-    #[OAT\Parameter(name:"id", in:"path", required:true)]
-    #[OAT\Response(response:"200", description:"Success")]
-    public function noSchema(): void
+    #[OA\Get(path: "/baz/{id}")]
+    #[OA\Response(response:"200", description:"Success")]
+    public function noSchema(
+        #[OA\Parameter]string $id
+    ): void
     {
     }
 
-    #[OAT\Get(path: "/bar/{id}")]
-    #[OAT\Parameter(
-        name:"id",
-        in:"path",
-        required:true,
-        schema: new OAT\Schema(type:"string", pattern:"^[a-zA-Z0-9]+$")
-    )]
-    #[OAT\Response(response:"200", description:"Success")]
-    public function withPattern(): void
+    #[OA\Get(path: "/bar/{id}/{type}")]
+    #[OA\Response(response:"200", description:"Success")]
+    public function withPattern(
+        #[OA\PathParameter(required: true, schema: new OA\Schema(pattern:"^[a-zA-Z0-9]+$"))]
+        string $id,
+        #[OA\PathParameter(required: true, schema: new OA\Schema(enum: ["internal", "external"]))]
+        string $type
+    ): void
     {
     }
 }

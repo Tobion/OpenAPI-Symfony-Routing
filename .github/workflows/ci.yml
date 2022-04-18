@@ -76,4 +76,4 @@ jobs:
 
             -   name: Run tests
                 continue-on-error: true
-                run: vendor/bin/simple-phpunit tests
+                run: vendor/bin/simple-phpunit

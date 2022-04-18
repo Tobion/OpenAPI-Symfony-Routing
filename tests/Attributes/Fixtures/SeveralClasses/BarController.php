@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Tobion\OpenApiSymfonyRouting\Tests\Attributes\Fixtures\SeveralClasses;
 
-use OpenApi\Attributes as OAT;
+use OpenApi\Attributes as OA;
 
-#[OAT\Info(title:"My API", version:"1.0")]
+#[OA\Info(title:"My API", version:"1.0")]
 class BarController
 {
-    #[OAT\Get(path:"/bar")]
-    #[OAT\Response(response:"200", description:"Success")]
+    #[OA\Get(path:"/bar")]
+    #[OA\Response(response:"200", description:"Success")]
     public function __invoke(): void
     {
     }
