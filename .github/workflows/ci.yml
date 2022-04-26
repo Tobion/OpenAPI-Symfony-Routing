@@ -25,7 +25,7 @@ jobs:
                 uses: actions/checkout@v2
 
             -   name: Install dependencies
-                run: composer update --no-interaction --prefer-stable --prefer-lowest --no-progress --prefer-dist
+                run: composer update --no-interaction --prefer-stable --prefer-lowest --no-progress --prefer-dist --ansi
 
             -   name: Run tests
                 run: vendor/bin/simple-phpunit
@@ -46,10 +46,10 @@ jobs:
                     coverage: 'none'
 
             -   name: Checkout code
-                uses: actions/checkout@v2
+                uses: actions/checkout@v3
 
             -   name: Install dependencies
-                run: composer update --no-interaction --prefer-stable --no-progress --prefer-dist
+                run: composer update --no-interaction --prefer-stable --no-progress --prefer-dist --ansi
 
             -   name: Run tests
                 run: vendor/bin/simple-phpunit
@@ -66,13 +66,13 @@ jobs:
                     coverage: 'none'
 
             -   name: Checkout code
-                uses: actions/checkout@v2
+                uses: actions/checkout@v3
 
             -   name: Allow dev dependencies
                 run: composer config minimum-stability dev
 
             -   name: Install dependencies
-                run: composer update --no-interaction --no-progress --prefer-dist
+                run: composer update --no-interaction --no-progress --prefer-dist --ansi
 
             -   name: Run tests
                 continue-on-error: true
