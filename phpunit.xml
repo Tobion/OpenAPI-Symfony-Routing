@@ -7,6 +7,10 @@
     verbose                                 = "true"
     bootstrap                               = "vendor/autoload.php"
 >
+    <php>
+        <env name="SYMFONY_DEPRECATIONS_HELPER" value="max[total]=10&#38;max[self]=0"/>
+    </php>
+
     <testsuites>
         <testsuite name="Test Suite">
             <directory>tests/</directory>
