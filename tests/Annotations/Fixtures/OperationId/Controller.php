@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tobion\OpenApiSymfonyRouting\Tests\Fixtures\SeveralRoutesOnOneAction;
+namespace Tobion\OpenApiSymfonyRouting\Tests\Annotations\Fixtures\OperationId;
 
 use OpenApi\Annotations as OA;
 
@@ -16,16 +16,6 @@ class Controller
     /**
      * @OA\Get(
      *     path="/foobar",
-     *     @OA\Response(response="200", description="Success")
-     * )
-     *
-     * @OA\Post(
-     *     path="/foobar",
-     *     @OA\Response(response="200", description="Success")
-     * )
-     *
-     * @OA\Get(
-     *     path="/foo-bar",
      *     operationId="my-name",
      *     @OA\Response(response="200", description="Success")
      * )

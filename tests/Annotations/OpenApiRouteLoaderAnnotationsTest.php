@@ -2,27 +2,27 @@
 
 declare(strict_types=1);
 
-namespace Tobion\OpenApiSymfonyRouting\Tests;
+namespace Tobion\OpenApiSymfonyRouting\Tests\Annotations;
 
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Finder\Exception\DirectoryNotFoundException;
 use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\RouteCollection;
 use Tobion\OpenApiSymfonyRouting\OpenApiRouteLoader;
-use Tobion\OpenApiSymfonyRouting\Tests\Fixtures\Basic\Controller as BasicController;
-use Tobion\OpenApiSymfonyRouting\Tests\Fixtures\FormatSuffix\Controller as FormatSuffixController;
-use Tobion\OpenApiSymfonyRouting\Tests\Fixtures\OperationId\Controller as OperationIdController;
-use Tobion\OpenApiSymfonyRouting\Tests\Fixtures\PathParameterPattern\Controller as PathParameterPatternController;
-use Tobion\OpenApiSymfonyRouting\Tests\Fixtures\Priority\Controller as PriorityController;
-use Tobion\OpenApiSymfonyRouting\Tests\Fixtures\SeveralClasses\BarController;
-use Tobion\OpenApiSymfonyRouting\Tests\Fixtures\SeveralClasses\FooController;
-use Tobion\OpenApiSymfonyRouting\Tests\Fixtures\SeveralClasses\SubNamespace\SubController;
-use Tobion\OpenApiSymfonyRouting\Tests\Fixtures\SeveralHttpMethods\Controller as SeveralHttpMethodsController;
-use Tobion\OpenApiSymfonyRouting\Tests\Fixtures\SeveralRoutesOnOneAction\Controller as SeveralRoutesOnOneActionController;
+use Tobion\OpenApiSymfonyRouting\Tests\Annotations\Fixtures\Basic\Controller as BasicController;
+use Tobion\OpenApiSymfonyRouting\Tests\Annotations\Fixtures\FormatSuffix\Controller as FormatSuffixController;
+use Tobion\OpenApiSymfonyRouting\Tests\Annotations\Fixtures\OperationId\Controller as OperationIdController;
+use Tobion\OpenApiSymfonyRouting\Tests\Annotations\Fixtures\PathParameterPattern\Controller as PathParameterPatternController;
+use Tobion\OpenApiSymfonyRouting\Tests\Annotations\Fixtures\Priority\Controller as PriorityController;
+use Tobion\OpenApiSymfonyRouting\Tests\Annotations\Fixtures\SeveralClasses\BarController;
+use Tobion\OpenApiSymfonyRouting\Tests\Annotations\Fixtures\SeveralClasses\FooController;
+use Tobion\OpenApiSymfonyRouting\Tests\Annotations\Fixtures\SeveralClasses\SubNamespace\SubController;
+use Tobion\OpenApiSymfonyRouting\Tests\Annotations\Fixtures\SeveralHttpMethods\Controller as SeveralHttpMethodsController;
+use Tobion\OpenApiSymfonyRouting\Tests\Annotations\Fixtures\SeveralRoutesOnOneAction\Controller as SeveralRoutesOnOneActionController;
 
-class OpenApiRouteLoaderTest extends TestCase
+final class OpenApiRouteLoaderAnnotationsTest extends TestCase
 {
-    private const FIXTURES_ROUTE_NAME_PREFIX = 'tobion_openapisymfonyrouting_tests_fixtures_';
+    private const FIXTURES_ROUTE_NAME_PREFIX = 'tobion_openapisymfonyrouting_tests_annotations_fixtures_';
 
     public function testBasic(): void
     {

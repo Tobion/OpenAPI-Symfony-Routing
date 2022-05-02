@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tobion\OpenApiSymfonyRouting\Tests\Fixtures\FormatSuffix;
+namespace Tobion\OpenApiSymfonyRouting\Tests\Annotations\Fixtures\FormatSuffix;
 
 use OpenApi\Annotations as OA;
 

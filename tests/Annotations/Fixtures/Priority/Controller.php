@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tobion\OpenApiSymfonyRouting\Tests\Fixtures\Priority;
+namespace Tobion\OpenApiSymfonyRouting\Tests\Annotations\Fixtures\Priority;
 
 use OpenApi\Annotations as OA;
 

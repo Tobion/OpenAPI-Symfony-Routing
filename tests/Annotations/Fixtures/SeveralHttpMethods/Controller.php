@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tobion\OpenApiSymfonyRouting\Tests\Fixtures\SeveralHttpMethods;
+namespace Tobion\OpenApiSymfonyRouting\Tests\Annotations\Fixtures\SeveralHttpMethods;
 
 use OpenApi\Annotations as OA;
 

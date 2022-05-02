@@ -28,6 +28,11 @@ class OpenApiRouteLoader implements RouteLoaderInterface
     private $routeNames = [];
 
     /**
+     * @var null|Generator
+     */
+    private $generator = null;
+
+    /**
      * @var string
      */
     private static $openApiUndefined;
@@ -86,12 +91,30 @@ class OpenApiRouteLoader implements RouteLoaderInterface
            return \OpenApi\scan($this->finder);
         }
 
-        $processors = array_filter(Analysis::processors(), static function ($processor): bool {
-            // remove OperationId processor which would hash the controller starting in 3.2.2 breaking the default route name logic
-            return !$processor instanceof OperationId && !$processor instanceof DocBlockDescriptions;
-        });
+        if (null !== $this->generator) {
+            return $this->generator->generate($this->finder);
+        }
 
-        return (new Generator())->setProcessors($processors)->generate($this->finder);
+        if (method_exists(Analysis::class, 'processors')) {
+            $processors = array_filter(Analysis::processors(), static function ($processor): bool {
+                // remove OperationId processor which would hash the controller starting in 3.2.2 breaking the default route name logic
+                return !$processor instanceof OperationId && !$processor instanceof DocBlockDescriptions;
+            });
+
+            $this->generator = (new Generator())->setProcessors($this->filterProcessors($processors));
+
+            return $this->generator->generate($this->finder);
+        }
+
+        $this->generator = new Generator();
+
+        $this->generator->setProcessors(
+            $this->filterProcessors(
+                $this->generator->getProcessors()
+            )
+        );
+
+        return $this->generator->generate($this->finder);
     }
 
     /**
@@ -128,8 +151,14 @@ class OpenApiRouteLoader implements RouteLoaderInterface
         }
         if (self::$openApiUndefined !== $operation->parameters) {
             foreach ($operation->parameters as $parameter) {
-                if ('path' === $parameter->in && self::$openApiUndefined !== $parameter->schema && self::$openApiUndefined !== $parameter->schema->pattern) {
-                    $route->setRequirement($parameter->name, $parameter->schema->pattern);
+                if ('path' === $parameter->in && self::$openApiUndefined !== $parameter->schema) {
+                    if (self::$openApiUndefined !== $parameter->schema->pattern) {
+                        $route->setRequirement($parameter->name, $parameter->schema->pattern);
+                    }
+
+                    if (self::$openApiUndefined !== $parameter->schema->enum) {
+                        $route->setRequirement($parameter->name, implode('|', $parameter->schema->enum));
+                    }
                 }
             }
         }
@@ -189,5 +218,12 @@ class OpenApiRouteLoader implements RouteLoaderInterface
         }
 
         return $name;
+    }
+
+    private function filterProcessors(array $processors): array
+    {
+        return array_filter($processors, static function ($processor): bool {
+            return !$processor instanceof OperationId && !$processor instanceof DocBlockDescriptions;
+        });
     }
 }
